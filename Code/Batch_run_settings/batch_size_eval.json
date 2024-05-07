@@ -1,0 +1,22 @@
+{
+    "1": [ "test_model.py",
+        {        
+        "load_from": "Isabel_batchsize_1000",
+        "tests": "streamfunction"
+    }],
+    "2": [ "test_model.py",
+        {        
+        "load_from": "Isabel_batchsize_10000",
+        "tests": "streamfunction"
+    }],
+    "3": [ "test_model.py",
+        {        
+        "load_from": "Isabel_batchsize_100000",
+        "tests": "streamfunction"
+    }],
+    "4": [ "test_model.py",
+        {        
+        "load_from": "Isabel_batchsize_1000000",
+        "tests": "streamfunction"
+    }]
+}

@@ -1,0 +1,47 @@
+{
+    "1": [ "test_model.py",
+        {        
+        "load_from": "isabel_4x128",
+        "tests": "streamfunction"
+    }],
+    "2": [ "test_model.py",
+        {        
+        "load_from": "isabel_6x128",
+        "tests": "streamfunction"
+    }],
+    "3": [ "test_model.py",
+        {        
+        "load_from": "isabel_8x128",
+        "tests": "streamfunction"
+    }],
+    "4": [ "test_model.py",
+        {        
+        "load_from": "isabel_4x256",
+        "tests": "streamfunction"
+    }],
+    "5": [ "test_model.py",
+        {        
+        "load_from": "isabel_6x256",
+        "tests": "streamfunction"
+    }],
+    "6": [ "test_model.py",
+        {        
+        "load_from": "isabel_8x256",
+        "tests": "streamfunction"
+    }],
+    "7": [ "test_model.py",
+        {        
+        "load_from": "isabel_4x512",
+        "tests": "streamfunction"
+    }],
+    "8": [ "test_model.py",
+        {        
+        "load_from": "isabel_6x512",
+        "tests": "streamfunction"
+    }],
+    "9": [ "test_model.py",
+        {        
+        "load_from": "isabel_8x512",
+        "tests": "streamfunction"
+    }]
+}
