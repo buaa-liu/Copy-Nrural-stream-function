@@ -19,10 +19,15 @@ import imageio
 import numpy as np
 import torch.nn
 
-def tensor_to_img(t: torch.Tensor, path:str):    
+# 作用是将给定的 PyTorch 张量转换为图像，并保存到指定路径
+def tensor_to_img(t: torch.Tensor, path:str):
+    # # 将输入的张量 t 分离出来，移动到 CPU 并转换为 NumPy 数组
     img_data: np.ndarray = t.detach().cpu().numpy()
+    # 将图像数据进行缩放以适应图像的像素值范围（0到255）
     img_data *= 255
+    # 将图像数据类型转换为无符号8位整数（uint8）
     img_data = img_data.astype(np.uint8)
+    # 使用 imageio 库将图像数据保存为图像文件，路径为指定的 path
     imageio.imwrite(path, img_data)
 
 class Grid():
@@ -790,15 +795,22 @@ if __name__ == '__main__':
     project_folder_path = os.path.join(project_folder_path, "..", "..")
     data_folder = os.path.join(project_folder_path, "Data")
     output_folder = os.path.join(project_folder_path, "Output")
-    save_folder = os.path.join(project_folder_path, "SavedModels")  # 找不大SavedModels，尝试更改为
+    save_folder = os.path.join(project_folder_path, "SavedModels")  #
     # save_folder = os.path.join(project_folder_path, "Models")
 
     torch.manual_seed(11235813)
-
+    # 从指定路径中加载训练选项（options）
     opt = load_options(os.path.join(save_folder, args["load_from"]))
+    # 设置设备选项，这里假设设备选项已经在 args 中指定了
     opt["device"] = args["device"]
+
+    # 设置数据设备选项，可能也是从 args 中指定的
     opt['data_device'] = args['device']
+
+    # 设置保存名称，通常为加载的文件名
     opt["save_name"] = args["load_from"]
+
+    # 循环遍历 args 字典的键，如果对应的值不为 None，则将其添加到 opt 字典中
     for k in args.keys():
         if args[k] is not None:
             opt[k] = args[k]

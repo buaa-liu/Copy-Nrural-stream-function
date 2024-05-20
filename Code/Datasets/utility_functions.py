@@ -10,6 +10,8 @@ import pickle
 import h5py
 #import numba as nb
 
+"""主要功能是图像处理、张量操作、数据存储和读取，适用于深度学习模型的开发和应用"""
+
 def reset_grads(model,require_grad):
     for p in model.parameters():
         p.requires_grad_(require_grad)

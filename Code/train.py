@@ -22,9 +22,15 @@ data_folder = os.path.join(project_folder_path, "Data")
 output_folder = os.path.join(project_folder_path, "Output")
 save_folder = os.path.join(project_folder_path, "SavedModels")
 
-def log_to_writer(iteration, losses, writer, opt):
-    with torch.no_grad():   
+def log_to_writer(iteration, losses, writer, opt):   # iteration迭代次数、loss损失值、writer写入日志的记录器对象、
+    # opt
+    # 配置选项字典
+    # 主要功能是在训练过程中记录并输出迭代过程中的损失值（losses），同时将这些信息写入到一个日志文件或者TensorBoard之类的可视化工具中，
+    # 以便后续分析。此函数还监控了GPU的内存使用情况
+    with torch.no_grad():    # 使用 torch.no_grad() 上下文管理器来禁用自动梯度计算，仅需要前向传播来获取损失值，不需要反向传播来计算梯度
+        # 节省内存，加速计算
         print_str = f"Iteration {iteration}/{opt['iterations']}, "
+        # 初始化一个字符串，用于构建打印到控制台的信息，显示当前迭代次数和总迭代次数。
         for key in losses.keys():    
             print_str = print_str + str(key) + f": {losses[key].item() : 0.05f} " 
             writer.add_scalar(str(key), losses[key].item(), iteration)
@@ -33,8 +39,10 @@ def log_to_writer(iteration, losses, writer, opt):
             / (1024**3))
         writer.add_scalar('GPU memory (GB)', GBytes, iteration)
 
+
+# 定义函数log_image(), 目的是在训练过程中从给定的模型生成图像样本，并将该图像记录到日志中
 def log_image(model, dataset, grid_to_sample, writer, iteration):
-    with torch.no_grad():
+    with torch.no_grad():  # 上下文管理器，不计算梯度，节省计算资源
         img = model.sample_grid_for_image(grid_to_sample)
         print("img shape: " + str(img.shape))
         if(dataset.min() < 0 or dataset.max() > 1.0):
@@ -43,6 +51,8 @@ def log_image(model, dataset, grid_to_sample, writer, iteration):
         writer.add_image('Reconstruction', img.clamp(0, 1), 
             iteration, dataformats='HWC')
 
+
+# 定义函数log
 def log_grad_image(model, grid_to_sample, writer, iteration):
     grad_img = model.sample_grad_grid_for_image(grid_to_sample)
     for output_index in range(len(grad_img)):

@@ -2,7 +2,9 @@ import os
 import json
 
 class Options():
-    def get_default():  # 函数用于获取默认选项，返回一个包含默认选项的字典
+    # def get_default():  # 函数用于获取默认选项，返回一个包含默认选项的字典
+    @classmethod  # 增加一个装饰器
+    def get_default(self):
         opt = {}
 
         # For descriptions of all variables, see train.py

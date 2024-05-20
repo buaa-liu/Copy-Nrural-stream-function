@@ -1,3 +1,4 @@
+# 导入必要模块
 import torch
 import torch.nn as nn
 import numpy as np
@@ -6,9 +7,18 @@ import sys
 script_dir = os.path.dirname(__file__)
 other_dir = os.path.join(script_dir, "..", "Other")
 sys.path.append(other_dir)
+"""这段代码的作用是将当前脚本文件所在目录的上一级目录中的"Other"目录添加到Python模块搜索路径中:
+os.path.dirname(__file__)用于获取当前脚本文件的所在目录。
+os.path.join(script_dir, "..", "Other")将当前脚本文件所在目录的上一级目录与"Other"目录拼接，得到"Other"目录的绝对路径。
+sys.path.append(other_dir)将"Other"目录的绝对路径添加到Python模块搜索路径中，这样在后续的代码中就可以导入该目录下的模块或文件了。
+"""
+# 导入自定义模块
 from utility_functions import make_coord_grid, PositionalEncoding
+# 这里引用爆红，可能是python版本的问题。前述代码已经将不同文件夹的内容进行了引用
 from siren import SineLayer
 
+
+# 定义带有余弦激活函数的残差层
 class ResidualSineLayer(nn.Module):
     def __init__(self, features, bias=True, ave_first=False, ave_second=False, omega_0=30):
         super().__init__()
@@ -23,19 +33,20 @@ class ResidualSineLayer(nn.Module):
 
         self.init_weights()
   
-
+    # 初始化权重
     def init_weights(self):
         with torch.no_grad():
             self.linear_1.weight.uniform_(-np.sqrt(6 / self.features) / self.omega_0, 
                                            np.sqrt(6 / self.features) / self.omega_0)
             self.linear_2.weight.uniform_(-np.sqrt(6 / self.features) / self.omega_0, 
                                            np.sqrt(6 / self.features) / self.omega_0)
-
+    # 前向传播
     def forward(self, input):
         sine_1 = torch.sin(self.omega_0 * self.linear_1(self.weight_1*input))
         sine_2 = torch.sin(self.omega_0 * self.linear_2(sine_1))
         return self.weight_2*(input+sine_2)
-    
+
+    # 改变层的节点数
     def change_nodes_per_layer(self, num_nodes):
         l1_weights = self.linear_1.weight.detach().clone()
         l1_bias = self.linear_1.bias.detach().clone()
@@ -51,7 +62,8 @@ class ResidualSineLayer(nn.Module):
         self.init_weights()
         
         print(self.linear_1.weight.shape)
-    
+
+# 定义全连接神经网络
 class fSRN(nn.Module):
     def __init__(self, opt):
         super().__init__()
@@ -69,7 +81,7 @@ class fSRN(nn.Module):
                 is_first=True, omega_0=opt['omega']
                 )
             )
-
+        # 添加残差层
         i = 0
         while i < opt['n_layers']:
             self.net.append(ResidualSineLayer(opt['nodes_per_layer'], 
@@ -77,7 +89,7 @@ class fSRN(nn.Module):
                 ave_second=(i==opt['n_layers']-1),
                 omega_0=opt['omega']))                 
             i += 1
-
+        # 添加最终线性层并初始化权重
         final_linear = nn.Linear(opt['nodes_per_layer'], 
                                  opt['n_outputs'], bias=True)
             
@@ -89,6 +101,8 @@ class fSRN(nn.Module):
         #self.net.append(nn.BatchNorm1d(opt['n_outputs'], affine=False))
         
         self.net = nn.Sequential(*self.net)
+
+    # 改变层的节点数
     
     def change_nodes_per_layer(self, num_nodes):
         for layer in self.net:

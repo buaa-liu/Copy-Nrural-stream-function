@@ -21,7 +21,7 @@ class SineLayer(nn.Module):
         
         self.init_weights()
     
-    def init_weights(self):
+    def init_weights(self):   # 初始化权重，根据是否是第一层采用不同的初始化方法
         with torch.no_grad():
             if self.is_first:
                 self.linear.weight.uniform_(-1 / self.in_features, 
@@ -31,15 +31,19 @@ class SineLayer(nn.Module):
                                              np.sqrt(6 / self.in_features) / self.omega_0)
         
     def forward(self, input):
+        # 前向传播过程，即将输入数据经过线性变换后再经过正弦函数变换
         return torch.sin(self.omega_0 * self.linear(input))
     
-    def forward_with_intermediate(self, input): 
+    def forward_with_intermediate(self, input):
+        # 可视化激活分布，返回正弦函数变换前后的结果
         # For visualization of activation distributions
         intermediate = self.omega_0 * self.linear(input)
         return torch.sin(intermediate), intermediate
 
 class SIREN(nn.Module):
+    # 定义了一个SIREN类，用于组合多个SineLayer层构建整个SIREN模型
     def __init__(self, opt):
+        # 在初始化函数__init__中，根据传入的参数opt，构建了SIREN模型的结构
         super().__init__()
         
         self.opt = opt
